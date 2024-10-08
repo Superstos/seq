@@ -58,14 +58,16 @@
 </script>
 
 <main class="subpixel-antialiased min-h-screen dark:bg-gray-800 bg-gray-200">
-  <div class="grid grid-cols-2 p-3 max-w-xl mx-auto">
-    <div class="inline-flex flex-wrap items-center gap-2">
-      <label class="text-gray-100 w-32" for="bpm">{bpm} BPM/RPM</label>
-      <input type="range" id="bpm" name="bpm" min="100" bind:value={bpm} max="4000" step="10" class="">
-    </div>
-    <div class="inline-flex flex-wrap items-center gap-2">
-      <label class="text-gray-100" for="volume">Volume</label>
-      <input type="range" id="volume" name="volume" min="-1" max="0" step="0.01" on:input={handleVolumeChange} class="">
+  <div id="controls" class="grid grid-cols-1 gap-3 max-w-xl mx-auto p-3">
+    <div class="grid grid-cols-1 md:grid-cols-2">
+      <div class="inline-flex flex-wrap items-center gap-2">
+        <label class="text-gray-100 w-32" for="bpm">{bpm} BPM/RPM</label>
+        <input type="range" id="bpm" name="bpm" min="100" bind:value={bpm} max="4000" step="10" class="">
+      </div>
+      <div class="inline-flex flex-wrap items-center gap-2">
+        <label class="text-gray-100" for="volume">Volume</label>
+        <input type="range" id="volume" name="volume" min="-1" max="0" step="0.01" on:input={handleVolumeChange} class="">
+      </div>
     </div>
     <div class="grid grid-cols-1 gap-3">
       {#if !isPlaying}
@@ -75,13 +77,14 @@
       {/if}
     </div>
   </div>
+
   <div class="grid grid-cols-8 items-center justify-center gap-3 w-full p-3 max-w-xl mx-auto">
     {#each beatIndicators as beatIndicator, bi}
-      <div class="squircle place-self-center h-3 w-3 {bi === beat - 1 ? 'bg-lime-500' : ''}"></div>
+      <div class="squircle place-self-center h-3 w-3 {bi === beat && isPlaying ? 'bg-lime-500' : ''}"></div>
     {/each}
     {#each rows as row, i}
       {#each row as note, j}
-        <button class="w-12 h-12 squircle 
+        <button class="w-16 h-16 squircle 
           {note.active ? 'bg-red-600' : 'bg-gray-600'}
           {j % 4 === 0 ? 'bg-gray-700' : ''}"
           on:click={() => {handleNoteClick(i, j)}}  
