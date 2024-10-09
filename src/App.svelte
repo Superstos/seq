@@ -64,7 +64,7 @@
         Warning: 
       </strong><br>if your machine is not of today's standard don't push the slider more than 5000
       and even if you do be careful near 8000. <br>
-      <span class="font-normal">if you do just try to lower the bpm and press stop if it crashes it's ok, <br>
+      <span class="font-normal">if you get stuck just try to lower the bpm and press stop if it crashes it's ok, <br>
         you may open a new tab
       </span>
     </p>
@@ -75,7 +75,7 @@
     </p>
     <i class="text-base text-center border-l-4 border-zinc-500 p-3 my-3 bg-zinc-300 dark:bg-zinc-700">
       note:
-      the calculations may seem wrong most of the times <br>
+      the calculations may seem wrong most of the time <br>
       sorry for the shubby explanation.
       but if you know what you are doing; 
       either way have fun.
