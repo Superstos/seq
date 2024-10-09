@@ -106,7 +106,7 @@
     </div>
   </div>
   <div class="max-w-[100vw] overflow-x-scroll lg:max-w-full lg:overflow-x-visible pb-32">
-    <div class="grid grid-cols-16 gap-3 items-center justify-center justify-items-center p-3 w-7xl max-w-7xl mx-auto">
+    <div class="grid grid-cols-16 gap-3 items-center justify-center justify-items-center p-3 w-[1000rem] max-w-7xl mx-auto">
       {#each beatIndicators as beatIndicator, bi}
         <div class="squircle place-self-center h-3 w-3 {bi === beat && isPlaying ? 'bg-lime-500' : ''}"></div>
       {/each}
