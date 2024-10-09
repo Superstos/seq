@@ -6,16 +6,16 @@
   const volumeControl = new Tone.Gain(-0.5).toDestination(); // Start with muted volume
   KICKSAMPLE.connect(volumeControl);
   
-  let bpm = 100; // Initial BPM
+  let bpm = 600; // Initial BPM
   let beat = 0;
   let isPlaying = false;
 
   // Define rows for beat activation
   let rows = [
-      Array.from({ length: 12 }, (_, i) => ({ active: false })),
+      Array.from({ length: 16 }, (_, i) => ({ active: false })),
   ];
   
-  let beatIndicators = Array.from({ length: 12 }, (_, i) => i);
+  let beatIndicators = Array.from({ length: 16 }, (_, i) => i);
   
   // Schedule repeat to play the kick sample
   Tone.Transport.scheduleRepeat(time => {
@@ -25,7 +25,7 @@
               KICKSAMPLE.start(time);
           }
       });
-      beat = (beat + 1) % 12;
+      beat = (beat + 1) % 16;
   }, "8n");
   
   const handleNoteClick = (rowIndex, noteIndex) => {
@@ -71,7 +71,7 @@
     <h1 class="text-center text-5xl md:text-7xl font-mono font-bold tracking-tighter mb-6">Step Sequencer Demo</h1>
     <p class="text-base text-center">this Demo showcase's the performance of svelte and tone.js as the tempo increases
       and the fun part is... if you select some random notes and increase the Bpm from the slider
-      a non perfect fake sounding car engine will be formed.
+      a non perfect fake sounding car engine will be produced.
     </p>
     <i class="text-base text-center border-l-4 border-gray-500 p-3 my-3 bg-gray-300 dark:bg-gray-700">
       note: sorry for the shubby explanation. but if you know what you are doing; 
@@ -106,7 +106,7 @@
     </div>
   </div>
   <div class="max-w-[100vw] overflow-x-scroll lg:max-w-full lg:overflow-x-visible pb-32">
-    <div class="grid grid-cols-12 gap-3 items-center justify-center justify-items-center p-3 w-[1000px] max-w-5xl mx-auto">
+    <div class="grid grid-cols-16 gap-3 items-center justify-center justify-items-center p-3 w-7xl max-w-7xl mx-auto">
       {#each beatIndicators as beatIndicator, bi}
         <div class="squircle place-self-center h-3 w-3 {bi === beat && isPlaying ? 'bg-lime-500' : ''}"></div>
       {/each}
