@@ -1,28 +1,26 @@
 <script>
   import * as Tone from "tone";
-  import kick from "./assets/sounds/kick.ogg"; // Use Ogg for better performance
+  import kick from "./assets/sounds/kick.ogg";
   
   const KICKSAMPLE = new Tone.Player(kick).toDestination();
-  const volumeControl = new Tone.Gain(0).toDestination(); // Start with muted volume
+  const volumeControl = new Tone.Gain(0).toDestination();
   KICKSAMPLE.connect(volumeControl);
   
-  let bpm = 600; // Initial BPM
+  let bpm = 600;
   let kmh = (bpm * 60) / 1000;
   let beat = 0;
   let isPlaying = false;
 
-  // Define rows for beat activation
   let rows = [
       Array.from({ length: 16 }, (_, i) => ({ active: false })),
   ];
   
   let beatIndicators = Array.from({ length: 16 }, (_, i) => i);
   
-  // Schedule repeat to play the kick sample
   Tone.Transport.scheduleRepeat(time => {
       rows.forEach((row) => {
           if (row[beat].active) {
-              KICKSAMPLE.stop(); // Stop any currently playing sample
+              KICKSAMPLE.stop();
               KICKSAMPLE.start(time);
           }
       });
@@ -35,7 +33,7 @@
   
   const handlePlayClick = () => {
       if (!isPlaying) Tone.start();
-      Tone.Transport.bpm.value = bpm; // Set the BPM
+      Tone.Transport.bpm.value = bpm;
       Tone.Transport.start();
       isPlaying = true;
   };
@@ -47,11 +45,11 @@
   
   const handleVolumeChange = (event) => {
       const volume = event.target.value;
-      volumeControl.gain.value = volume; // Update gain value based on slider
+      volumeControl.gain.value = volume;
   };
   
   $: if (isPlaying) {
-      Tone.Transport.bpm.value = bpm; // Update BPM while playing
+      Tone.Transport.bpm.value = bpm;
   }
   $: kmh = (bpm * 60) / 1000;
 </script>
