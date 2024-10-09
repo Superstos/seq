@@ -54,8 +54,8 @@
   }
 </script>
 
-<main class="subpixel-antialiased min-h-screen h-full dark:bg-gray-800 bg-gray-200">
-  <div class="flex flex-col max-w-3xl mx-auto p-3 text-gray-900 dark:text-gray-100 text-balance">
+<main class="subpixel-antialiased min-h-screen h-full dark:bg-zinc-800 bg-zinc-200">
+  <div class="flex flex-col max-w-3xl mx-auto p-3 text-zinc-900 dark:text-zinc-100 text-balance">
     <p class="max-w-xl mx-auto font-normal text-center text-lg p-3 dark:text-red-600 text-red-700">
       <strong class="inline-flex items-center gap-1 text-xl font-semibold">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -73,12 +73,12 @@
       and the fun part is... if you select some random notes and increase the Bpm from the slider
       a non perfect fake sounding car engine will be produced.
     </p>
-    <i class="text-base text-center border-l-4 border-gray-500 p-3 my-3 bg-gray-300 dark:bg-gray-700">
+    <i class="text-base text-center border-l-4 border-zinc-500 p-3 my-3 bg-zinc-300 dark:bg-zinc-700">
       note: sorry for the shubby explanation. but if you know what you are doing; 
       either way have fun.
     </i>
   </div>
-  <div id="controls" class="grid grid-cols-1 gap-3 justify-between max-w-xl mx-auto p-3 text-gray-900 dark:text-gray-100">
+  <div id="controls" class="grid grid-cols-1 gap-3 justify-between max-w-xl mx-auto p-3 text-zinc-900 dark:text-zinc-100">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
       <div class="inline-flex flex-wrap items-center gap-2">
         <label class="w-32" for="bpm">{bpm} BPM</label>
@@ -94,14 +94,14 @@
         [&::-webkit-slider-thumb]:transition-all
         [&::-webkit-slider-thumb]:duration-150
         [&::-webkit-slider-thumb]:ease-in-out
-        [&::-webkit-slider-thumb]:dark:bg-gray-700
+        [&::-webkit-slider-thumb]:dark:bg-zinc-700
       
         [&::-moz-range-thumb]:w-2.5
         [&::-moz-range-thumb]:h-2.5
         [&::-moz-range-thumb]:appearance-none
         [&::-moz-range-thumb]:bg-white
         [&::-moz-range-thumb]:border-4
-        [&::-moz-range-thumb]:border-gray-600
+        [&::-moz-range-thumb]:border-zinc-600
         [&::-moz-range-thumb]:rounded-full
         [&::-moz-range-thumb]:transition-all
         [&::-moz-range-thumb]:duration-150
@@ -109,13 +109,13 @@
       
         [&::-webkit-slider-runnable-track]:w-full
         [&::-webkit-slider-runnable-track]:h-2
-        [&::-webkit-slider-runnable-track]:bg-gray-100
+        [&::-webkit-slider-runnable-track]:bg-zinc-100
         [&::-webkit-slider-runnable-track]:rounded-full
-        [&::-webkit-slider-runnable-track]:dark:bg-gray-700
+        [&::-webkit-slider-runnable-track]:dark:bg-zinc-700
       
         [&::-moz-range-track]:w-full
         [&::-moz-range-track]:h-2
-        [&::-moz-range-track]:bg-gray-100
+        [&::-moz-range-track]:bg-zinc-100
         [&::-moz-range-track]:rounded-full">
       </div>
       <div class="inline-flex flex-wrap items-center gap-2">
@@ -132,14 +132,14 @@
         [&::-webkit-slider-thumb]:transition-all
         [&::-webkit-slider-thumb]:duration-150
         [&::-webkit-slider-thumb]:ease-in-out
-        [&::-webkit-slider-thumb]:dark:bg-gray-700
+        [&::-webkit-slider-thumb]:dark:bg-zinc-700
       
         [&::-moz-range-thumb]:w-2.5
         [&::-moz-range-thumb]:h-2.5
         [&::-moz-range-thumb]:appearance-none
         [&::-moz-range-thumb]:bg-white
         [&::-moz-range-thumb]:border-4
-        [&::-moz-range-thumb]:border-gray-600
+        [&::-moz-range-thumb]:border-zinc-600
         [&::-moz-range-thumb]:rounded-full
         [&::-moz-range-thumb]:transition-all
         [&::-moz-range-thumb]:duration-150
@@ -147,25 +147,25 @@
       
         [&::-webkit-slider-runnable-track]:w-full
         [&::-webkit-slider-runnable-track]:h-2
-        [&::-webkit-slider-runnable-track]:bg-gray-100
+        [&::-webkit-slider-runnable-track]:bg-zinc-100
         [&::-webkit-slider-runnable-track]:rounded-full
-        [&::-webkit-slider-runnable-track]:dark:bg-gray-700
+        [&::-webkit-slider-runnable-track]:dark:bg-zinc-700
       
         [&::-moz-range-track]:w-full
         [&::-moz-range-track]:h-2
-        [&::-moz-range-track]:bg-gray-100
+        [&::-moz-range-track]:bg-zinc-100
         [&::-moz-range-track]:rounded-full">
       </div>
     </div>
     <div class="grid grid-cols-1 gap-3">
       {#if !isPlaying}
-        <button on:click={handlePlayClick} class="btn-gray w-min mx-auto" id="play" name="play">
+        <button on:click={handlePlayClick} class="btn-zinc w-min mx-auto" id="play" name="play">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
           </svg>
         </button>
       {:else}
-        <button on:click={handleStopClick} class="btn-gray w-min mx-auto" id="stop" name="stop">
+        <button on:click={handleStopClick} class="btn-zinc w-min mx-auto" id="stop" name="stop">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
           </svg>          
@@ -181,8 +181,8 @@
       {#each rows as row, i}
         {#each row as note, j}
           <button class="w-16 h-16 squircle 
-            {note.active ? 'bg-red-600' : 'bg-gray-600'}
-            {j % 4 === 0 ? 'bg-gray-700' : ''}"
+            {note.active ? 'bg-red-600' : 'bg-zinc-600'}
+            {j % 4 === 0 ? 'bg-zinc-700' : ''}"
             on:click={() => {handleNoteClick(i, j)}}  
           >
           </button>
