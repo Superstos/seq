@@ -4,7 +4,26 @@
   
   const KICKSAMPLE = new Tone.Player(kick).toDestination();
   const volumeControl = new Tone.Gain(0).toDestination();
+
+  const bellFilter = new Tone.Filter({
+      frequency: 300,
+      type: "peaking",
+      gain: -6,
+      Q: 0.5,
+  }).toDestination();
+
+  const reverb = new Tone.Reverb({
+      decay: 3,
+      preDelay: 0.1,
+      wet: 0.3,
+  }).toDestination();
+
+  KICKSAMPLE.connect(bellFilter);
+  bellFilter.connect(reverb);
+
   KICKSAMPLE.connect(volumeControl);
+  bellFilter.connect(volumeControl);
+  reverb.connect(volumeControl);
   
   let bpm = 600;
   let tireDiameter = 0.7;
@@ -51,10 +70,12 @@
       volumeControl.gain.value = volume;
   };
   
-  $: if (isPlaying) {
-      Tone.Transport.bpm.value = bpm;
+  $: {
+      if (isPlaying) {
+          Tone.Transport.bpm.value = bpm;
+      }
+      kmh = ((bpm * tireCircumference * 60) / (gearRatio * 1000)) / 2;
   }
-  $: kmh = ((bpm * tireCircumference * 60) / (gearRatio * 1000)) / 2;
 </script>
 
 <main class="subpixel-antialiased min-h-screen h-full dark:bg-zinc-800 bg-zinc-200">
@@ -65,15 +86,17 @@
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
         </svg>        
         Warning: 
-      </strong><br>if your machine is not of today's standard don't push the slider more than 5000
+      </strong><br>
+      Lower the valume before everything else!<br>
+      if your machine is not of today's standard don't push the slider more than 5000
       and even if you do be careful near 8000. <br>
-      <span class="font-normal">if you get stuck just try to lower the bpm and press stop if it crashes it's ok, <br>
-        you may open a new tab
+      <span class="font-normal">if you get stuck just try to lower the bpm and press stop.<br> 
+        if it crashes it's ok, you may open a new tab.
       </span>
     </p>
     <h1 class="text-center text-5xl md:text-7xl font-mono font-bold tracking-tighter mb-6">Step Sequencer Demo</h1>
     <p class="text-base text-center">this Demo showcase's the performance of svelte and tone.js as the tempo increases
-      and the fun part is... if you select some random notes and increase the Bpm from the slider
+      and the fun part is... if you select some random nodes and increase the Bpm from the slider
       a non perfect fake sounding car engine will be produced.
     </p>
     <i class="text-base text-center border-l-4 border-zinc-500 p-3 my-3 bg-zinc-300 dark:bg-zinc-700">
