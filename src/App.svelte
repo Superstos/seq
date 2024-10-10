@@ -7,7 +7,7 @@
   KICKSAMPLE.connect(volumeControl);
   
   let bpm = 600;
-  let kmh = (bpm * 60) / 1000;
+  let kmh = ((bpm * 60) / 1000) / 2;
   let beat = 0;
   let isPlaying = false;
 
@@ -51,7 +51,7 @@
   $: if (isPlaying) {
       Tone.Transport.bpm.value = bpm;
   }
-  $: kmh = (bpm * 60) / 1000;
+  $: kmh = ((bpm * 60) / 1000) / 2;
 </script>
 
 <main class="subpixel-antialiased min-h-screen h-full dark:bg-zinc-800 bg-zinc-200">
