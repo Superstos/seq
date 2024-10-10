@@ -7,15 +7,18 @@
   KICKSAMPLE.connect(volumeControl);
   
   let bpm = 600;
-  let kmh = ((bpm * 60) / 1000) / 2;
+  let tireDiameter = 0.7;
+  let gearRatio = 3.5;
+  let tireCircumference = Math.PI * tireDiameter;
+  let kmh = ((bpm * tireCircumference * 60) / (gearRatio * 1000)) / 2;
   let beat = 0;
   let isPlaying = false;
 
   let rows = [
-      Array.from({ length: 8 }, (_, i) => ({ active: false })),
+      Array.from({ length: 12 }, (_, i) => ({ active: false })),
   ];
   
-  let beatIndicators = Array.from({ length: 8 }, (_, i) => i);
+  let beatIndicators = Array.from({ length: 12 }, (_, i) => i);
   
   Tone.Transport.scheduleRepeat(time => {
       rows.forEach((row) => {
@@ -24,7 +27,7 @@
               KICKSAMPLE.start(time);
           }
       });
-      beat = (beat + 1) % 8;
+      beat = (beat + 1) % 12;
   }, "8n");
   
   const handleNoteClick = (rowIndex, noteIndex) => {
@@ -51,7 +54,7 @@
   $: if (isPlaying) {
       Tone.Transport.bpm.value = bpm;
   }
-  $: kmh = ((bpm * 60) / 1000) / 2;
+  $: kmh = ((bpm * tireCircumference * 60) / (gearRatio * 1000)) / 2;
 </script>
 
 <main class="subpixel-antialiased min-h-screen h-full dark:bg-zinc-800 bg-zinc-200">
@@ -85,7 +88,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
       <div class="inline-flex flex-wrap items-center gap-2">
         <label class="w-52" for="bpm">{bpm} BPM | {kmh.toFixed(2)} km/h</label>
-        <input type="range" id="bpm" name="bpm" min="100" bind:value={bpm} max="15000" step="10" 
+        <input type="range" id="bpm" name="bpm" min="100" bind:value={bpm} max="15000" step="100" 
         class="w-full bg-transparent cursor-pointer appearance-none disabled:opacity-50 disabled:pointer-events-none focus:outline-none
         [&::-webkit-slider-thumb]:w-2.5
         [&::-webkit-slider-thumb]:h-2.5
@@ -177,7 +180,7 @@
     </div>
   </div>
   <div class="max-w-[100vw] overflow-x-scroll lg:max-w-full lg:overflow-x-visible pb-32">
-    <div class="grid grid-cols-8 gap-3 items-center justify-center justify-items-center p-3 w-[1000rem] max-w-xl mx-auto">
+    <div class="grid grid-cols-12 gap-3 items-center justify-center justify-items-center p-3 w-[1000rem] max-w-5xl mx-auto">
       {#each beatIndicators as beatIndicator, bi}
         <div class="squircle place-self-center h-3 w-3 {bi === beat && isPlaying ? 'bg-lime-500' : ''}"></div>
       {/each}
