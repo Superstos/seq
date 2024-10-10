@@ -12,10 +12,10 @@
   let isPlaying = false;
 
   let rows = [
-      Array.from({ length: 16 }, (_, i) => ({ active: false })),
+      Array.from({ length: 8 }, (_, i) => ({ active: false })),
   ];
   
-  let beatIndicators = Array.from({ length: 16 }, (_, i) => i);
+  let beatIndicators = Array.from({ length: 8 }, (_, i) => i);
   
   Tone.Transport.scheduleRepeat(time => {
       rows.forEach((row) => {
@@ -24,7 +24,7 @@
               KICKSAMPLE.start(time);
           }
       });
-      beat = (beat + 1) % 16;
+      beat = (beat + 1) % 8;
   }, "8n");
   
   const handleNoteClick = (rowIndex, noteIndex) => {
@@ -177,7 +177,7 @@
     </div>
   </div>
   <div class="max-w-[100vw] overflow-x-scroll lg:max-w-full lg:overflow-x-visible pb-32">
-    <div class="grid grid-cols-16 gap-3 items-center justify-center justify-items-center p-3 w-[1000rem] max-w-7xl mx-auto">
+    <div class="grid grid-cols-8 gap-3 items-center justify-center justify-items-center p-3 w-[1000rem] max-w-xl mx-auto">
       {#each beatIndicators as beatIndicator, bi}
         <div class="squircle place-self-center h-3 w-3 {bi === beat && isPlaying ? 'bg-lime-500' : ''}"></div>
       {/each}
