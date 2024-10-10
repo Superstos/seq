@@ -12,18 +12,9 @@
       Q: 0.5,
   }).toDestination();
 
-  const reverb = new Tone.Reverb({
-      decay: 3,
-      preDelay: 0.1,
-      wet: 0.3,
-  }).toDestination();
-
   KICKSAMPLE.connect(bellFilter);
-  bellFilter.connect(reverb);
-
   KICKSAMPLE.connect(volumeControl);
   bellFilter.connect(volumeControl);
-  reverb.connect(volumeControl);
   
   let bpm = 600;
   let tireDiameter = 0.7;
