@@ -102,7 +102,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
       <div class="inline-flex flex-wrap items-center gap-2">
         <label class="w-52" for="bpm">{bpm} BPM | {kmh.toFixed(2)} km/h</label>
-        <input type="range" id="bpm" name="bpm" min="100" bind:value={bpm} max="15000" step="100" 
+        <input type="range" id="bpm" name="bpm" min="100" bind:value={bpm} max="15000" step="10" 
         class="w-full bg-transparent cursor-pointer appearance-none disabled:opacity-50 disabled:pointer-events-none focus:outline-none
         [&::-webkit-slider-thumb]:w-2.5
         [&::-webkit-slider-thumb]:h-2.5
