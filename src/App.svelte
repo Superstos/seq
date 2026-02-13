@@ -1,20 +1,57 @@
 <script>
+  import { onDestroy, onMount } from "svelte";
   import * as Tone from "tone";
   import kick from "./assets/sounds/kick.ogg";
-  
-  const KICKSAMPLE = new Tone.Player(kick).toDestination();
-  const volumeControl = new Tone.Gain(0).toDestination();
+
+  const KICK_VOICE_COUNT = 8;
+  const BPM_MIN = 100;
+  const BPM_MAX = 15000;
+  const BPM_RAMP_SECONDS = 0.08;
+  const VOLUME_MIN = 0;
+  const VOLUME_MAX = 1;
+  const VOLUME_DEFAULT = 0.65;
+  const VOLUME_RAMP_SECONDS = 0.05;
+  const ENGINE_BODY_MIN_HZ = 24;
+  const ENGINE_BODY_MAX_HZ = 96;
+  const ENGINE_BODY_GAIN_MIN = 0.02;
+  const ENGINE_BODY_GAIN_MAX = 0.1;
+  const COMBUSTION_ACCENT = 0.18;
+
+  const kickVoices = Array.from(
+    { length: KICK_VOICE_COUNT },
+    () => new Tone.Player(kick),
+  );
+  const volumeControl = new Tone.Gain(VOLUME_DEFAULT).toDestination();
 
   const bellFilter = new Tone.Filter({
       frequency: 300,
       type: "peaking",
       gain: -6,
       Q: 0.5,
-  }).toDestination();
+  });
+  const engineBodyGain = new Tone.Gain(0);
+  const engineBody = new Tone.Oscillator({
+      frequency: ENGINE_BODY_MIN_HZ,
+      type: "triangle",
+  });
+  const combustionLayer = new Tone.NoiseSynth({
+      noise: { type: "pink" },
+      envelope: {
+          attack: 0.001,
+          decay: 0.05,
+          sustain: 0,
+          release: 0.02,
+      },
+  });
 
-  KICKSAMPLE.connect(bellFilter);
-  KICKSAMPLE.connect(volumeControl);
+  kickVoices.forEach((voice) => {
+    voice.connect(bellFilter);
+  });
   bellFilter.connect(volumeControl);
+  engineBody.connect(engineBodyGain);
+  engineBodyGain.connect(bellFilter);
+  combustionLayer.connect(bellFilter);
+  engineBody.start();
   
   let bpm = 600;
   let tireDiameter = 0.7;
@@ -23,49 +60,115 @@
   let kmh = ((bpm * tireCircumference * 60) / (gearRatio * 1000)) / 2;
   let beat = 0;
   let isPlaying = false;
+  let volume = VOLUME_DEFAULT;
 
   let rows = [
       Array.from({ length: 12 }, (_, i) => ({ active: false })),
   ];
   
   let beatIndicators = Array.from({ length: 12 }, (_, i) => i);
-  
-  Tone.Transport.scheduleRepeat(time => {
+  let stepLoopId = null;
+  let nextKickVoice = 0;
+
+  const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+
+  const triggerKick = (time) => {
+    const voice = kickVoices[nextKickVoice];
+    nextKickVoice = (nextKickVoice + 1) % kickVoices.length;
+    voice.start(time);
+  };
+
+  const triggerCombustionLayer = (time) => {
+    combustionLayer.triggerAttackRelease("64n", time, COMBUSTION_ACCENT);
+  };
+
+  const syncEngineLayer = () => {
+    const normalizedBpm = (bpm - BPM_MIN) / (BPM_MAX - BPM_MIN);
+    const bodyFrequency =
+      ENGINE_BODY_MIN_HZ +
+      normalizedBpm * (ENGINE_BODY_MAX_HZ - ENGINE_BODY_MIN_HZ);
+    const bodyGain = isPlaying
+      ? ENGINE_BODY_GAIN_MIN +
+        normalizedBpm * (ENGINE_BODY_GAIN_MAX - ENGINE_BODY_GAIN_MIN)
+      : 0;
+
+    engineBody.frequency.rampTo(bodyFrequency, BPM_RAMP_SECONDS);
+    engineBodyGain.gain.rampTo(bodyGain, VOLUME_RAMP_SECONDS);
+  };
+
+  const startStepLoop = () => {
+    if (stepLoopId !== null) return;
+
+    stepLoopId = Tone.Transport.scheduleRepeat((time) => {
       rows.forEach((row) => {
           if (row[beat].active) {
-              KICKSAMPLE.stop();
-              KICKSAMPLE.start(time);
+              triggerKick(time);
+              triggerCombustionLayer(time);
           }
       });
       beat = (beat + 1) % 12;
-  }, "8n");
+    }, "8n");
+  };
+
+  const stopStepLoop = () => {
+    if (stepLoopId === null) return;
+
+    Tone.Transport.clear(stepLoopId);
+    stepLoopId = null;
+  };
+
+  onMount(() => {
+    startStepLoop();
+  });
+
+  onDestroy(() => {
+    stopStepLoop();
+    Tone.Transport.stop();
+    kickVoices.forEach((voice) => voice.dispose());
+    combustionLayer.dispose();
+    engineBody.stop();
+    engineBody.dispose();
+    engineBodyGain.dispose();
+    bellFilter.dispose();
+    volumeControl.dispose();
+  });
   
   const handleNoteClick = (rowIndex, noteIndex) => {
       rows[rowIndex][noteIndex].active = !rows[rowIndex][noteIndex].active;
   };
   
   const handlePlayClick = () => {
-      if (!isPlaying) Tone.start();
-      Tone.Transport.bpm.value = bpm;
-      Tone.Transport.start();
+      if (isPlaying) return;
+
+      Tone.start();
+      Tone.Transport.bpm.value = clamp(bpm, BPM_MIN, BPM_MAX);
+      if (Tone.Transport.state !== "started") {
+          Tone.Transport.start();
+      }
       isPlaying = true;
   };
   
   const handleStopClick = () => {
+      if (!isPlaying) return;
+
       Tone.Transport.stop();
       isPlaying = false;
   };
   
   const handleVolumeChange = (event) => {
-      const volume = event.target.value;
-      volumeControl.gain.value = volume;
+      volume = clamp(Number(event.target.value), VOLUME_MIN, VOLUME_MAX);
+      volumeControl.gain.rampTo(volume, VOLUME_RAMP_SECONDS);
   };
   
   $: {
+      bpm = clamp(Number(bpm), BPM_MIN, BPM_MAX);
       if (isPlaying) {
+          Tone.Transport.bpm.rampTo(bpm, BPM_RAMP_SECONDS);
+      } else {
           Tone.Transport.bpm.value = bpm;
       }
       kmh = ((bpm * tireCircumference * 60) / (gearRatio * 1000)) / 2;
+      syncEngineLayer();
   }
 </script>
 
@@ -102,7 +205,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
       <div class="inline-flex flex-wrap items-center gap-2">
         <label class="w-52" for="bpm">{bpm} BPM | {kmh.toFixed(2)} km/h</label>
-        <input type="range" id="bpm" name="bpm" min="100" bind:value={bpm} max="15000" step="10" 
+        <input type="range" id="bpm" name="bpm" min={BPM_MIN} bind:value={bpm} max={BPM_MAX} step="10" 
         class="w-full bg-transparent cursor-pointer appearance-none disabled:opacity-50 disabled:pointer-events-none focus:outline-none
         [&::-webkit-slider-thumb]:w-2.5
         [&::-webkit-slider-thumb]:h-2.5
@@ -140,7 +243,7 @@
       </div>
       <div class="inline-flex flex-wrap items-center gap-2">
         <label class="w-52" for="volume">Volume</label>
-        <input type="range" id="volume" name="volume" min="-1" max="0" step="0.01" on:input={handleVolumeChange} 
+        <input type="range" id="volume" name="volume" min={VOLUME_MIN} max={VOLUME_MAX} bind:value={volume} step="0.01" on:input={handleVolumeChange} 
         class="w-full bg-transparent cursor-pointer appearance-none disabled:opacity-50 disabled:pointer-events-none focus:outline-none
         [&::-webkit-slider-thumb]:w-2.5
         [&::-webkit-slider-thumb]:h-2.5
