@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Offline engine renders (node scripts/render-engine-sound.mjs)
+renders/
